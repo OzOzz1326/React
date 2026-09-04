@@ -38,8 +38,8 @@ function Formularios(){
             <input onChange={e => setIdade(e.target.value)}/>
             <br/>
             <p>Digite sua cidade e estado:</p>
-            <input onChange={e => setCidade(e.target.value)}/>
-            <input onChange={e => setEstado(e.target.value)}/>
+            <input placeholder="Cidade" onChange={e => setCidade(e.target.value)}/>
+            <input placeholder="Estado" onChange={e => setEstado(e.target.value)}/>
             <button onClick={salvar}>Salvar</button>
         </div>
     )
