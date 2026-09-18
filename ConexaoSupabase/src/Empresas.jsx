@@ -11,6 +11,11 @@ function Empresas() {
     const [showFuncionarios, setShowFuncionarios] = useState(false)
     /*----------------------------------------------*/
     const [showModal, setShowModal] = useState(false)
+    /*----------------------------------------------*/
+    const [idEmpresa, setIdEmpresa] = useState("")
+    const [nome, setNome] = useState("")
+    const [contato, setContato] = useState("")
+    const [cargo, setCargo] = useState("1")
 
     async function searchAllEmpresas() {
         const { error, data } = await supabase.from("empresas").select()
@@ -32,7 +37,7 @@ function Empresas() {
         console.log(data)
         setFuncionarios(data)
 
-        setView()
+        setIdEmpresa(id_empresa)
     }
 
     function setView(){
@@ -42,6 +47,25 @@ function Empresas() {
         }else{
             setShowEmpresas(true)
             setShowFuncionarios(false)
+        }
+    }
+
+    async function insertFuncionario(){
+        const obj ={
+            id_empresa: parseInt(idEmpresa),
+            nome: nome,
+            contato: contato,
+            cargo: parseInt(cargo)
+        }
+
+        const { error } = await supabase.from("funcionarios").insert(obj)
+        if (error == null){
+            alert ("Funcionário cadastrado")
+            setShowModal(false)
+            searchFuncionariosEmpresa(idEmpresa)
+        }else{
+            alert ("Erro ao cadastrar funcionário. Entre em contato com o suporte técnico")
+            console.log(error)
         }
     }
 
@@ -60,16 +84,16 @@ function Empresas() {
                     
                     <div className="modal">
                         <h2>Novo funcionário</h2>
-                        <input placeholder="Nome"/>
+                        <input onChange={(e)=> setNome(e.target.value)} placeholder="Nome"/>
                         <br/>
-                        <input placeholder="Contato"/>
+                        <input onChange={(e)=> setContato(e.target.value)} placeholder="Contato"/>
                         <br/>
-                        <select>
+                        <select onChange={(e)=> setCargo(e.target.value)}>
                             <option value="1">Funcionário comum</option>
                             <option value="0">Administrador</option>
                         </select>
                         <br/><br/>
-                        <button>Salvar</button>
+                        <button onClick={insertFuncionario}>Salvar</button>
                     </div>
                 </div>
                 :
@@ -98,7 +122,7 @@ function Empresas() {
                                         <td>{i.nome}</td>
                                         <td>{i.cnpj}</td>
                                         <td>{i.endereco}</td>
-                                        <td><button onClick={()=> searchFuncionariosEmpresa(i.id)}>Ver funcionários</button></td>
+                                        <td><button onClick={()=> {searchFuncionariosEmpresa(i.id); setView()}}>Ver funcionários</button></td>
                                     </tr>
                                 )
                             }
@@ -114,7 +138,7 @@ function Empresas() {
                         <h2>Funcionários</h2>
                         <button onClick={()=> setShowModal(true)}>Cadastrar</button>
                         <br/><br/>
-                        <button onClick={setView}>Voltar</button>
+                        <button onClick={()=> {setView(); setIdEmpresa()}}>Voltar</button>
 
                         <table border="true">
                             <tr>
